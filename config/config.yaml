@@ -1,0 +1,13 @@
+env: "development"
+
+database:
+  host: "localhost"
+  port: 5432
+  databaseName: "todo"
+  user: "dev"
+  password: "jokerge"
+
+http_server:
+  address: "localhost:8069"
+  timeout: 5s
+  iddle_timeout: 60s
