@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"restapi/internal/config"
 	"log/slog"
+
+	"restapi/internal/config"
 )
 
 const (
 	envProd = "prod"
 	envDev 	= "dev"
-	envProd = "prod"
+	envLocal = "local"
 )
 
 func main() {
