@@ -4,10 +4,12 @@ database:
   host: "localhost"
   port: 5432
   databaseName: "todo"
-  user: "dev"
-  password: "jokerge"
+  user: "todo_manager"
+  password: "1488"
 
 http_server:
   address: "localhost:8069"
   timeout: 5s
   iddle_timeout: 60s
+
+migrationPath: "./migration" # Path to migration files in Unix systems

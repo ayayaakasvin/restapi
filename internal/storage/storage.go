@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"restapi/internal/config"
+	migrationTool "restapi/internal/storage/migrationTool"
 
 	_ "github.com/lib/pq"
 )
@@ -20,6 +22,16 @@ func NewPostgresStorage(connStr string) (*PostgresStorage, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	// Run migration tool
+	if err := migrationTool.MigrationToolExecutable(config.MustLoadConfig()); err != nil {
+		return nil, err
+	}
+
 	return &PostgresStorage{db: db}, nil
 }
 

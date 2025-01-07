@@ -14,6 +14,7 @@ const (
 
 type Config struct {
 	Env 			string 			`yaml:"env" 			env-default:"development"`
+	MigrationPath 	string 			`yaml:"migrationPath" 	env-required:"true"`
 	Database 		StorageConfig 	`yaml:"database" 										env-required:"true"`
 	HTTPServer 						`yaml:"http_server"										env-required:"true"`
 }
