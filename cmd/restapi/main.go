@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "fmt"
 	"log/slog"
 	"os"
 
@@ -24,17 +23,36 @@ func main() {
 	log.Info("starting RESTful API")
 	log.Debug("debug message", slog.String("env", cfg.Env))
 
-	db, err := storage.NewPostgresStorageWithConfig(cfg.Database)
+	db, err := storage.NewPostgresStorage(cfg)
 	if err != nil {
 		log.Error("failed to setup storage", sl.Err(err))
 		os.Exit(1)
 	}
 
 	defer db.Close()
+	defer db.Reset()
 
-	if err := db.Ping(); err != nil {
-		log.Error("failed to ping database", sl.Err(err))
+	if err = db.SaveUser("test", "test"); err != nil {
+		log.Error("failed to save user", sl.Err(err))
+	}
+
+	if exists, err := db.UsernameExists("test"); err != nil {
+		log.Error("failed to check if username exists", sl.Err(err))
+	} else if exists {
+		log.Info("username exists")
+	} else {
+		log.Info("username does not exist")
+	}
+
+	if user, err := db.GetUserByID(1); err != nil {
+		log.Error("failed to get user by ID", sl.Err(err))
 		os.Exit(1)
+	} else {
+		log.Info("user found", sl.Any("user", user))
+	}
+
+	if err = db.DeleteUser(1); err != nil {
+		log.Error("failed to delete user by ID", sl.Err(err))
 	}
 
 	// TODO: implement the RESTful API with Gin
