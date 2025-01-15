@@ -2,16 +2,24 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 
 	"restapi/internal/config"
+	"restapi/internal/http-server/handlers/user/get"
+	"restapi/internal/http-server/handlers/user/save"
+	logger "restapi/internal/http-server/middleware"
+	"restapi/internal/lib/logger/handlers/prettyslog"
 	"restapi/internal/lib/sl"
 	"restapi/internal/storage"
+
+	"github.com/gin-contrib/requestid"
+	"github.com/gin-gonic/gin"
 )
 
 const (
-	envProd = "prod"
-	envDev 	= "dev"
+	envProd  = "prod"
+	envDev   = "dev"
 	envLocal = "local"
 )
 
@@ -28,36 +36,34 @@ func main() {
 		log.Error("failed to setup storage", sl.Err(err))
 		os.Exit(1)
 	}
-
 	defer db.Close()
-	defer db.Reset()
 
-	if err = db.SaveUser("test", "test"); err != nil {
-		log.Error("failed to save user", sl.Err(err))
+	router := gin.Default()
+
+	router.Use(requestid.New())
+	router.Use(gin.Logger())
+	router.Use(logger.New(log))
+	router.Use(gin.Recovery())
+	router.Use(logger.URLFormat())
+
+	router.POST("/user",save.SaveUserHandler(log, db))
+	router.GET("/user", get.GetUserHandler(log, db))
+
+	log.Info("starting HTTP server", slog.String("port", cfg.HTTPServer.Address))
+	
+	server := &http.Server{
+		Addr:    cfg.HTTPServer.Address,
+		Handler: router,
+		ReadTimeout: cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout: cfg.HTTPServer.Timeout,
 	}
 
-	if exists, err := db.UsernameExists("test"); err != nil {
-		log.Error("failed to check if username exists", sl.Err(err))
-	} else if exists {
-		log.Info("username exists")
-	} else {
-		log.Info("username does not exist")
+	if err := server.ListenAndServe(); err != nil {
+		log.Error("failed to start HTTP server", sl.Err(err))
 	}
 
-	if user, err := db.GetUserByID(1); err != nil {
-		log.Error("failed to get user by ID", sl.Err(err))
-		os.Exit(1)
-	} else {
-		log.Info("user found", sl.Any("user", user))
-	}
-
-	if err = db.DeleteUser(1); err != nil {
-		log.Error("failed to delete user by ID", sl.Err(err))
-	}
-
-	// TODO: implement the RESTful API with Gin
-
-	// TODO: run the HTTP server
+	log.Error("Server is shutting down")
 }
 
 func setupLogger(env string) *slog.Logger {
@@ -66,20 +72,30 @@ func setupLogger(env string) *slog.Logger {
 	switch env {
 	case envProd:
 		logger = slog.New(
-			slog.NewJSONHandler(os.Stdout, 
-			&slog.HandlerOptions{Level: slog.LevelInfo}),
+			slog.NewJSONHandler(os.Stdout,
+				&slog.HandlerOptions{Level: slog.LevelInfo}),
 		)
 	case envDev, envLocal:
-		logger = slog.New(
-			slog.NewTextHandler(os.Stdout,
-			&slog.HandlerOptions{Level: slog.LevelDebug}),
-		)
+		logger = setupPrettySlog()
 	default:
 		logger = slog.New(
 			slog.NewTextHandler(os.Stdout,
-			&slog.HandlerOptions{Level: slog.LevelDebug}),
+				&slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	}
 
 	return logger
+}
+
+// setupPrettySlog returns a logger that outputs pretty logs
+func setupPrettySlog() *slog.Logger {
+	opts := slogpretty.PrettyHandlerOptions{
+		SlogOpts: &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	}
+
+	handler := opts.NewPrettyHandler(os.Stdout)
+
+	return slog.New(handler)
 }
