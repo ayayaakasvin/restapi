@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"restapi/internal/config"
+	"restapi/internal/errorset"
 	"restapi/internal/lib/hashtool"
 	"restapi/internal/models"
 	migrationTool "restapi/internal/storage/migrationTool"
@@ -124,9 +125,18 @@ func (ps *PostgresStorage) UpdateUserPassword(id int64, password string) error {
 		return fmt.Errorf("failed to hash password: %w", err)
 	}
 
-	_, err = stmt.Exec(hashedPassword, id)
+	result, err := stmt.Exec(hashedPassword, id)
 	if err != nil {
 		return fmt.Errorf("failed to execute statement: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return errorset.ErrUserNotFound
 	}
 
 	return nil
@@ -140,9 +150,15 @@ func (ps *PostgresStorage) DeleteUser(id int64) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(id)
+	result, err := stmt.Exec(id)
 	if err != nil {
 		return fmt.Errorf("failed to execute statement: %w", err)
+	}
+
+	if rowsAffected, err := result.RowsAffected(); err != nil {
+		return fmt.Errorf("failed to retrieve rows affected: %w", err)
+	} else if rowsAffected == 0 {
+		return errorset.ErrUserNotFound
 	}
 
 	return nil

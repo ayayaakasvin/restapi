@@ -6,8 +6,10 @@ import (
 	"os"
 
 	"restapi/internal/config"
-	"restapi/internal/http-server/handlers/user/get"
-	"restapi/internal/http-server/handlers/user/save"
+	getter "restapi/internal/http-server/handlers/user/get"
+	saver "restapi/internal/http-server/handlers/user/save"
+	updater "restapi/internal/http-server/handlers/user/update"
+	deleter "restapi/internal/http-server/handlers/user/delete"
 	logger "restapi/internal/http-server/middleware"
 	"restapi/internal/lib/logger/handlers/prettyslog"
 	"restapi/internal/lib/sl"
@@ -46,8 +48,10 @@ func main() {
 	router.Use(gin.Recovery())
 	router.Use(logger.URLFormat())
 
-	router.POST("/user",save.SaveUserHandler(log, db))
-	router.GET("/user", get.GetUserHandler(log, db))
+	router.POST("/user",saver.SaveUserHandler(log, db))
+	router.GET("/user", getter.GetUserHandler(log, db))
+	router.PATCH("/user", updater.UpdateUserPasswordHandler(log, db))
+	router.DELETE("/user", deleter.DeleteUserHandler(log, db))
 
 	log.Info("starting HTTP server", slog.String("port", cfg.HTTPServer.Address))
 	
