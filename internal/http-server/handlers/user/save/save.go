@@ -58,14 +58,14 @@ func SaveUserHandler(log *slog.Logger, us UserSaver) gin.HandlerFunc {
 			return
 		}
 
-		exists, err := us.UsernameExists(req.Username)
+		userexists, err := us.UsernameExists(req.Username)
 		if err != nil {
 			log.Error("failed to check if username exists", sl.Err(err))
 			responseError(c, http.StatusInternalServerError, "failed to check if username exists")
 			return
 		}
 
-		if exists {
+		if userexists {
 			log.Warn("username already exists")
 			responseError(c, http.StatusConflict, "username already exists")
 			return

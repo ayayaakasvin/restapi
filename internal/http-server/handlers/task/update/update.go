@@ -1,10 +1,9 @@
-package save
+package update
 
 import (
 	"log/slog"
 	"net/http"
 
-	"restapi/internal/errorset"
 	"restapi/internal/lib/sl"
 	"restapi/internal/models/status"
 
@@ -13,25 +12,24 @@ import (
 
 // Request
 type Request struct {
-    UserID      int64   `json:"user_id" binding:"required,gt=0"`
+	TaskID      int64   `json:"task_id" binding:"required,gt=0"`
     TaskContent string  `json:"task_content" binding:"required"`
 }
 
 // Response
 type Response struct {
 	Status status.Status    `json:"status"`
-	UserID int64            `json:"user_id,omitempty"`
     TaskID int64            `json:"task_id,omitempty"`
 }
 
-type TaskSaver interface {
-	SaveTask(userId int64, content string) (int64, error)
+type TaskUpdater interface {
+	UpdateTaskContent(task_id int64, content string) error
 }
 
 // SaveTaskHandler saves a new user
-func SaveTaskHandler(log *slog.Logger, ts TaskSaver) gin.HandlerFunc {
+func UpdateTaskHandler(log *slog.Logger, tu TaskUpdater) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const op = "handlers.task.save.SaveTaskHandler"
+		const op = "handlers.task.update.UpdateTaskHandler"
 		requestID, exists := c.Get("request_id")
 		if !exists {
 			requestID = "unknown"
@@ -52,32 +50,21 @@ func SaveTaskHandler(log *slog.Logger, ts TaskSaver) gin.HandlerFunc {
 
 		log.Info("decoded request", slog.Any("req", req))
 
-		id, err := ts.SaveTask(req.UserID, req.TaskContent)
+		err := tu.UpdateTaskContent(req.TaskID, req.TaskContent)
 		if err != nil {
-			log.Error("failed to save task", sl.Err(err))
-            if err == errorset.ErrUserNotFound {
-			    responseError(c, http.StatusConflict, errorset.ErrUserNotFound.Error()) 
-				return
-            }
-			responseError(c, http.StatusInternalServerError, "failed to save task")
-			return
-		}
-		if id == 0 {
-			log.Error("unexpected task ID = 0 after saving task")
-			responseError(c, http.StatusInternalServerError, "unexpected server error")
+			log.Error("failed to update task", sl.Err(err))
+			responseError(c, http.StatusInternalServerError, "failed to update task")
 			return
 		}
 
-		log.Info("task saved successfully", slog.Int64("user_id", req.UserID))
-		log.Info("task saved successfully", slog.Int64("task_id", id))
-		responseOk(c, req.UserID, id)
+		log.Info("task updated successfully", slog.Int64("task_id", req.TaskID))
+		responseOk(c, req.TaskID)
 	}
 }
 
-func responseOk(c *gin.Context, user_id, task_id int64) {
-	c.JSON(http.StatusCreated, Response{
+func responseOk(c *gin.Context, task_id int64) {
+	c.JSON(http.StatusOK, Response{
 		Status: status.OK(),
-		UserID: user_id,
         TaskID: task_id,
 	})
 }

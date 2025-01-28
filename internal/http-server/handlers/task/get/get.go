@@ -14,22 +14,22 @@ import (
 )
 
 type Request struct {
-	ID int64 `json:"id" binding:"required,gt=0"`
+	UserID int64 `json:"user_id" binding:"required,gt=0"`
 }
 
 type Response struct {
 	Status status.Status `json:"status"`
-	User   *models.User  `json:"user,omitempty"`
+	Tasks []*models.Task `json:"tasks,omitempty"`
 }
 
-type UserGetter interface {
-	GetUserByID(id int64) (*models.User, error) 
+type TasksGetter interface {
+	GetTasksByUserID(id int64) ([]*models.Task, error)
 }
 
-func GetUserHandler (log *slog.Logger, ug UserGetter) gin.HandlerFunc {
+func GetTasksHandler (log *slog.Logger, tg TasksGetter) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const op = "handlers.user.get.GetUserHandler"
-		requestID, exists := c.Get("request_id")
+		const op = "handlers.task.get.GetTasksHandler"
+		requestID, exists := c.Get("RequestID")
         if !exists {
             requestID = "unknown"
         }
@@ -49,7 +49,7 @@ func GetUserHandler (log *slog.Logger, ug UserGetter) gin.HandlerFunc {
 
 		log.Info("decoded request", slog.Any("req", req))
 
-		userObject, err := ug.GetUserByID(req.ID)
+		tasksSlice, err := tg.GetTasksByUserID(req.UserID)
 		if err != nil {
 			if errors.Is(err, errorset.ErrUserNotFound) {
 				log.Error(err.Error(), sl.Err(err))
@@ -62,14 +62,19 @@ func GetUserHandler (log *slog.Logger, ug UserGetter) gin.HandlerFunc {
 			return
 		}
 
-		responseOk(c, userObject)
+		if len(tasksSlice) == 0 {
+			responseError(c, http.StatusNotFound, errorset.ErrTaskNotFound.Error())
+			return
+		}
+
+		responseOk(c, tasksSlice)
 	}
 }
 
-func responseOk(c *gin.Context, userObj *models.User) {
+func responseOk(c *gin.Context, taskSlice []*models.Task) {
 	c.JSON(http.StatusOK, Response{
 		Status: status.OK(),
-		User: userObj,
+		Tasks: taskSlice,
 	})
 }
 
