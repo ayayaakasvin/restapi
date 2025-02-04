@@ -6,10 +6,14 @@ import (
 	"os"
 
 	"restapi/internal/config"
-	getter "restapi/internal/http-server/handlers/user/get"
-	saver "restapi/internal/http-server/handlers/user/save"
-	updater "restapi/internal/http-server/handlers/user/update"
-	deleter "restapi/internal/http-server/handlers/user/delete"
+	userDeleter "restapi/internal/http-server/handlers/user/delete"
+	userGetter "restapi/internal/http-server/handlers/user/get"
+	userSaver "restapi/internal/http-server/handlers/user/save"
+	userUpdater "restapi/internal/http-server/handlers/user/update"
+	taskSaver "restapi/internal/http-server/handlers/task/save"
+	taskGetter "restapi/internal/http-server/handlers/task/get"
+	taskUpdater "restapi/internal/http-server/handlers/task/update"
+	taskDeleter "restapi/internal/http-server/handlers/task/delete"
 	logger "restapi/internal/http-server/middleware"
 	"restapi/internal/lib/logger/handlers/prettyslog"
 	"restapi/internal/lib/sl"
@@ -48,10 +52,15 @@ func main() {
 	router.Use(gin.Recovery())
 	router.Use(logger.URLFormat())
 
-	router.POST("/user",saver.SaveUserHandler(log, db))
-	router.GET("/user", getter.GetUserHandler(log, db))
-	router.PATCH("/user", updater.UpdateUserPasswordHandler(log, db))
-	router.DELETE("/user", deleter.DeleteUserHandler(log, db))
+	router.POST("/user",userSaver.SaveUserHandler(log, db))
+	router.GET("/user", userGetter.GetUserHandler(log, db))
+	router.PATCH("/user", userUpdater.UpdateUserPasswordHandler(log, db))
+	router.DELETE("/user", userDeleter.DeleteUserHandler(log, db))
+	
+	router.POST("/task", taskSaver.SaveTaskHandler(log, db))
+	router.GET("/task", taskGetter.GetTasksHandler(log, db))
+	router.PATCH("/task", taskUpdater.UpdateTaskHandler(log, db))
+	router.DELETE("/task", taskDeleter.DeleteTaskHandler(log, db))
 
 	log.Info("starting HTTP server", slog.String("port", cfg.HTTPServer.Address))
 	
