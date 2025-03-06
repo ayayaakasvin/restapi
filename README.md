@@ -25,7 +25,7 @@
 
 ### Get Tasks by User ID
 - **URL**: `/task/user`
-- **Method**: `POST`
+- **Method**: `GET`
 - **Request Body**:
   ```json
   {
@@ -49,7 +49,7 @@
 
 ### Get Task by Task ID
 - **URL**: `/task`
-- **Method**: `POST`
+- **Method**: `GET`
 - **Request Body**:
   ```json
   {
