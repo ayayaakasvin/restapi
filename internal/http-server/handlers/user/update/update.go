@@ -14,17 +14,17 @@ import (
 )
 
 type Request struct {
-	ID 			int64 	`json:"id" binding:"required,gt=0"`
+	ID 			int64 	`json:"userId" binding:"required,gt=0"`
 	Password	string	`json:"password" binding:"required,min=8"`
 }
 
 type Response struct {
 	Status status.Status 	`json:"status"`
-	UserID int64 			`json:"user_id,omitempty"`
+	UserID int64 			`json:"userId,omitempty"`
 }
 
 type UserUpdater interface {
-	UpdateUserPassword(id int64, password string) (error)
+	UpdateUserPassword(userId int64, password string) (error)
 }
 
 func UpdateUserPasswordHandler (log *slog.Logger, uu UserUpdater) gin.HandlerFunc {

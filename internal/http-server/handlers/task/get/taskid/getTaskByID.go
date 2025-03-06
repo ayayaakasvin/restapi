@@ -9,27 +9,24 @@ import (
 	"restapi/internal/lib/sl"
 	"restapi/internal/models"
 	"restapi/internal/models/status"
+	"restapi/internal/http-server/handlers/task/get"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Request struct {
-	ID int64 `json:"userId" binding:"required,gt=0"`
+	TaskID int64 `json:"taskId" binding:"required,gt=0"`
 }
 
 type Response struct {
-	Status status.Status `json:"status"`
-	User   *models.User  `json:"user,omitempty"`
+	Status 	status.Status `json:"status"`
+	Task 	*models.Task `json:"task,omitempty"`
 }
 
-type UserGetter interface {
-	GetUserByID(userId int64) (*models.User, error) 
-}
-
-func GetUserHandler (log *slog.Logger, ug UserGetter) gin.HandlerFunc {
+func GetTaskHandler (log *slog.Logger, tg get.TasksGetter) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const op = "handlers.user.get.GetUserHandler"
-		requestID, exists := c.Get("request_id")
+		const op = "handlers.task.get.GetTaskHandler"
+		requestID, exists := c.Get("RequestID")
         if !exists {
             requestID = "unknown"
         }
@@ -49,27 +46,27 @@ func GetUserHandler (log *slog.Logger, ug UserGetter) gin.HandlerFunc {
 
 		log.Info("decoded request", slog.Any("req", req))
 
-		userObject, err := ug.GetUserByID(req.ID)
+		task, err := tg.GetTaskByTaskID(req.TaskID)
 		if err != nil {
-			if errors.Is(err, errorset.ErrUserNotFound) {
+			if errors.Is(err, errorset.ErrTaskNotFound) {
 				log.Error(err.Error(), sl.Err(err))
 				responseError(c, http.StatusNotFound, err.Error())
 				return
 			}
 			
-			log.Error("failed to get user", sl.Err(err))
-			responseError(c, http.StatusInternalServerError, "failed to get user")
+			log.Error("failed to get task", sl.Err(err))
+			responseError(c, http.StatusInternalServerError, "failed to get task")
 			return
 		}
 
-		responseOk(c, userObject)
+		responseOk(c, task)
 	}
 }
 
-func responseOk(c *gin.Context, userObj *models.User) {
+func responseOk(c *gin.Context, task *models.Task) {
 	c.JSON(http.StatusOK, Response{
 		Status: status.OK(),
-		User: userObj,
+		Task: task,
 	})
 }
 

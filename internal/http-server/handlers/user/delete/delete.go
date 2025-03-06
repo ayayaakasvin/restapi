@@ -13,7 +13,7 @@ import (
 )
 
 type Request struct {
-	ID 			int64 	`json:"id" binding:"required,gt=0"`
+	ID 			int64 	`json:"userId" binding:"required,gt=0"`
 }
 
 type Response struct {
@@ -21,7 +21,7 @@ type Response struct {
 }
 
 type UserDeleter interface {
-	DeleteUser(id int64) (error)
+	DeleteUser(userId int64) (error)
 }
 
 func DeleteUserHandler (log *slog.Logger, ud UserDeleter) gin.HandlerFunc {

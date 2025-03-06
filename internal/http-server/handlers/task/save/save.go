@@ -13,15 +13,15 @@ import (
 
 // Request
 type Request struct {
-    UserID      int64   `json:"user_id" binding:"required,gt=0"`
-    TaskContent string  `json:"task_content" binding:"required"`
+    UserID      int64   `json:"userId" binding:"required,gt=0"`
+    TaskContent string  `json:"taskContent" binding:"required"`
 }
 
 // Response
 type Response struct {
 	Status status.Status    `json:"status"`
-	UserID int64            `json:"user_id,omitempty"`
-    TaskID int64            `json:"task_id,omitempty"`
+	UserID int64            `json:"userId,omitempty"`
+    TaskID int64            `json:"taskId,omitempty"`
 }
 
 type TaskSaver interface {

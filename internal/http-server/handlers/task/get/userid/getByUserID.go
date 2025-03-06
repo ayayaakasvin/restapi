@@ -9,12 +9,13 @@ import (
 	"restapi/internal/lib/sl"
 	"restapi/internal/models"
 	"restapi/internal/models/status"
+	"restapi/internal/http-server/handlers/task/get"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Request struct {
-	UserID int64 `json:"user_id" binding:"required,gt=0"`
+	UserID int64 `json:"userId" binding:"required,gt=0"`
 }
 
 type Response struct {
@@ -22,11 +23,7 @@ type Response struct {
 	Tasks []*models.Task `json:"tasks,omitempty"`
 }
 
-type TasksGetter interface {
-	GetTasksByUserID(id int64) ([]*models.Task, error)
-}
-
-func GetTasksHandler (log *slog.Logger, tg TasksGetter) gin.HandlerFunc {
+func GetTasksHandler (log *slog.Logger, tg get.TasksGetter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "handlers.task.get.GetTasksHandler"
 		requestID, exists := c.Get("RequestID")

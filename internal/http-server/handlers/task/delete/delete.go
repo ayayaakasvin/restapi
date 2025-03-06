@@ -12,7 +12,7 @@ import (
 
 // Request
 type Request struct {
-	TaskID      int64   `json:"task_id" binding:"required,gt=0"`
+	TaskID      int64   `json:"taskId" binding:"required,gt=0"`
 }
 
 // Response
@@ -21,10 +21,10 @@ type Response struct {
 }
 
 type TaskDeleter interface {
-	DeleteTask(task_id int64) error
+	DeleteTask(taskId int64) error
 }
 
-// SaveTaskHandler saves a new user
+// DeleteTaskHandler deletes user record from database
 func DeleteTaskHandler(log *slog.Logger, td TaskDeleter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "handlers.task.delete.DeleteTaskHandler"
@@ -61,7 +61,7 @@ func DeleteTaskHandler(log *slog.Logger, td TaskDeleter) gin.HandlerFunc {
 }
 
 func responseOk(c *gin.Context) {
-	c.JSON(http.StatusCreated, Response{
+	c.JSON(http.StatusOK, Response{
 		Status: status.OK(),
 	})
 }

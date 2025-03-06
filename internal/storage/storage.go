@@ -221,6 +221,26 @@ func (ps *PostgresStorage) GetTasksByUserID(userID int64) ([]*models.Task, error
 	return tasks, nil
 }
 
+// GetTaskByTaskID retrieves a record from the PostgreSQL database by key
+func (ps *PostgresStorage) GetTaskByTaskID(taskID int64) (*models.Task, error) {
+	stmt, err := ps.db.Prepare("SELECT id, user_id, task_content, created_at FROM tasks WHERE id = $1")
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stmt.Close()
+
+	var task models.Task
+	err = stmt.QueryRow(taskID).Scan(&task.ID, &task.UserID, &task.TaskContent, &task.CreatedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errorset.ErrTaskNotFound
+		}
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
+	}
+
+	return &task, nil
+}
+
 // UpdateTask updates a record in the PostgreSQL database
 func (ps *PostgresStorage) UpdateTaskContent(task_id int64, content string) error {
 	stmt, err := ps.db.Prepare("UPDATE tasks SET task_content = $1 WHERE id = $2")

@@ -12,18 +12,18 @@ import (
 
 // Request
 type Request struct {
-	TaskID      int64   `json:"task_id" binding:"required,gt=0"`
-    TaskContent string  `json:"task_content" binding:"required"`
+	TaskID      int64   `json:"taskId" binding:"required,gt=0"`
+    TaskContent string  `json:"taskContent" binding:"required"`
 }
 
 // Response
 type Response struct {
 	Status status.Status    `json:"status"`
-    TaskID int64            `json:"task_id,omitempty"`
+    TaskID int64            `json:"taskId,omitempty"`
 }
 
 type TaskUpdater interface {
-	UpdateTaskContent(task_id int64, content string) error
+	UpdateTaskContent(taskId int64, content string) error
 }
 
 // SaveTaskHandler saves a new user
@@ -62,10 +62,10 @@ func UpdateTaskHandler(log *slog.Logger, tu TaskUpdater) gin.HandlerFunc {
 	}
 }
 
-func responseOk(c *gin.Context, task_id int64) {
+func responseOk(c *gin.Context, taskId int64) {
 	c.JSON(http.StatusOK, Response{
 		Status: status.OK(),
-        TaskID: task_id,
+        TaskID: taskId,
 	})
 }
 

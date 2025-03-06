@@ -11,7 +11,8 @@ import (
 	userSaver "restapi/internal/http-server/handlers/user/save"
 	userUpdater "restapi/internal/http-server/handlers/user/update"
 	taskSaver "restapi/internal/http-server/handlers/task/save"
-	taskGetter "restapi/internal/http-server/handlers/task/get"
+	taskGetter "restapi/internal/http-server/handlers/task/get/taskid"
+	tasksGetter "restapi/internal/http-server/handlers/task/get/userid"
 	taskUpdater "restapi/internal/http-server/handlers/task/update"
 	taskDeleter "restapi/internal/http-server/handlers/task/delete"
 	logger "restapi/internal/http-server/middleware"
@@ -54,11 +55,12 @@ func main() {
 
 	router.POST("/user",userSaver.SaveUserHandler(log, db))
 	router.GET("/user", userGetter.GetUserHandler(log, db))
-	router.PATCH("/user", userUpdater.UpdateUserPasswordHandler(log, db))
+	router.PATCH("/user/password", userUpdater.UpdateUserPasswordHandler(log, db))
 	router.DELETE("/user", userDeleter.DeleteUserHandler(log, db))
 	
 	router.POST("/task", taskSaver.SaveTaskHandler(log, db))
-	router.GET("/task", taskGetter.GetTasksHandler(log, db))
+	router.GET("/task/user", tasksGetter.GetTasksHandler(log, db))
+	router.GET("/task", taskGetter.GetTaskHandler(log, db))
 	router.PATCH("/task", taskUpdater.UpdateTaskHandler(log, db))
 	router.DELETE("/task", taskDeleter.DeleteTaskHandler(log, db))
 

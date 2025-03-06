@@ -20,7 +20,7 @@ type Request struct {
 // Response
 type Response struct {
 	Status status.Status `json:"status"`
-	UserID int64         `json:"user_id,omitempty"`
+	UserID int64         `json:"userId,omitempty"`
 }
 
 type UserSaver interface {
