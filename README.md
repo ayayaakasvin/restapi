@@ -24,7 +24,7 @@
     ```
 
 ### Get Tasks by User ID
-- **URL**: `/tasks/user`
+- **URL**: `/task/user`
 - **Method**: `POST`
 - **Request Body**:
   ```json
