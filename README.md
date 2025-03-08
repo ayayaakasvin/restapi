@@ -1,111 +1,5 @@
 # REST API Documentation
 
-## Task Endpoints
-
-### Create Task
-- **URL**: `/task`
-- **Method**: `POST`
-- **Request Body**:
-  ```json
-  {
-    "userId": 1,
-    "taskContent": "Task content"
-  }
-  ```
-- **Response**:
-  - **Status**: `201 Created`
-  - **Body**:
-    ```json
-    {
-      "status": "ok",
-      "userId": 1,
-      "taskId": 1
-    }
-    ```
-
-### Get Tasks by User ID
-- **URL**: `/task/user`
-- **Method**: `GET`
-- **Request Body**:
-  ```json
-  {
-    "userId": 1
-  }
-  ```
-- **Response**:
-  - **Status**: `200 OK`
-  - **Body**:
-    ```json
-    {
-      "status": "ok",
-      "tasks": [
-        {
-          "id": 1,
-          "content": "Task content"
-        }
-      ]
-    }
-    ```
-
-### Get Task by Task ID
-- **URL**: `/task`
-- **Method**: `GET`
-- **Request Body**:
-  ```json
-  {
-    "taskId": 1
-  }
-  ```
-- **Response**:
-  - **Status**: `200 OK`
-  - **Body**:
-    ```json
-    {
-      "status": "ok",
-      "task": {
-        "id": 1,
-        "content": "Task content"
-      }
-    }
-    ```
-
-### Update Task
-- **URL**: `/task`
-- **Method**: `PUT`
-- **Request Body**:
-  ```json
-  {
-    "taskId": 1,
-    "taskContent": "Updated task content"
-  }
-  ```
-- **Response**:
-  - **Status**: `200 OK`
-  - **Body**:
-    ```json
-    {
-      "status": "ok",
-      "taskId": 1
-    }
-    ```
-
-### Delete Task
-- **URL**: `/task`
-- **Method**: `DELETE`
-- **Request Body**:
-  ```json
-  {
-    "taskId": 1
-  }
-  ```
-- **Response**:
-  - **Status**: `200 OK`
-  - **Body**:
-    ```json
-    {
-      "status": "ok"
-    }
-    ```
 
 ## User Endpoints
 
@@ -115,8 +9,8 @@
 - **Request Body**:
   ```json
   {
-    "username": "user1",
-    "password": "password123"
+    "username": "name",
+    "password": "Password123"
   }
   ```
 - **Response**:
@@ -124,41 +18,43 @@
   - **Body**:
     ```json
     {
-      "status": "ok",
-      "userId": 1
+      "state": {
+          "status": "Success"
+      },
+      "data": {
+          "userId": 3
+      }
     }
     ```
 
 ### Get User by User ID
-- **URL**: `/user`
-- **Method**: `POST`
-- **Request Body**:
-  ```json
-  {
-    "userId": 1
-  }
-  ```
+- **URL**: `/user/:userId`
+- **Method**: `GET`
 - **Response**:
   - **Status**: `200 OK`
   - **Body**:
     ```json
     {
-      "status": "ok",
-      "user": {
-        "id": 1,
-        "username": "user1"
+      "state": {
+          "status": "Success"
+      },
+      "data": {
+          "user": {
+              "userId": 3,
+              "username": "name",
+              "createdAt": "2025-03-08T18:22:46.628854Z"
+          }
       }
     }
     ```
 
 ### Update User Password
-- **URL**: `/user/password`
+- **URL**: `/user/:userId/password`
 - **Method**: `PUT`
 - **Request Body**:
   ```json
   {
-    "userId": 1,
-    "password": "newpassword123"
+    "password": "Newpassword123"
   }
   ```
 - **Response**:
@@ -166,26 +62,26 @@
   - **Body**:
     ```json
     {
-      "status": "ok",
-      "userId": 1
+        "state": {
+            "status": "Success"
+        },
+        "data": {
+            "userId": 3
+        }
     }
     ```
 
 ### Delete User
-- **URL**: `/user`
+- **URL**: `/user/:userId`
 - **Method**: `DELETE`
-- **Request Body**:
-  ```json
-  {
-    "userId": 1
-  }
-  ```
 - **Response**:
   - **Status**: `200 OK`
   - **Body**:
     ```json
     {
-      "status": "ok"
+        "state": {
+            "status": "Success"
+        }
     }
     ```
 
@@ -213,3 +109,112 @@
       "status": "error",
       "message": "unexpected server error"
     }
+
+## Task Endpoints
+
+### Create Task
+- **URL**: `/task/:userId`
+- **Method**: `POST`
+- **Request Body**:
+  ```json
+    {
+        "taskContent": "Hello World!"
+    }
+  ```
+- **Response**:
+  - **Status**: `201 Created`
+  - **Body**:
+    ```json
+    {
+        "state": {
+            "status": "Success"
+        },
+        "data": {
+            "taskId": 1,
+            "userId": 1
+        }
+    }
+    ```
+
+### Get Tasks by User ID
+- **URL**: `/task/user/:userId`
+- **Method**: `GET`
+- **Response**:
+  - **Status**: `200 OK`
+  - **Body**:
+    ```json
+    {
+        "state": {
+            "status": "Success"
+        },
+        "data": {
+            "tasks": [
+                {
+                    "taskId": 1,
+                    "userId": 1,
+                    "taskContent": "Hello World!",
+                    "createdAt": "2025-03-08T18:28:31.800531+05:00"
+                }
+            ]
+        }
+    }
+    ```
+
+### Get Task by Task ID
+- **URL**: `/task/:taskId`
+- **Method**: `GET`
+- **Response**:
+  - **Status**: `200 OK`
+  - **Body**:
+    ```json
+    {
+        "state": {
+            "status": "Success"
+        },
+        "data": {
+            "task": {
+                "taskId": 1,
+                "userId": 1,
+                "taskContent": "Hello World!",
+                "createdAt": "2025-03-08T18:28:31.800531+05:00"
+            }
+        }
+    }
+    ```
+
+### Update Task
+- **URL**: `/task`
+- **Method**: `PUT`
+- **Request Body**:
+  ```json
+  {
+      "taskContent": "Hello"
+  }
+  ```
+- **Response**:
+  - **Status**: `200 OK`
+  - **Body**:
+    ```json
+    {
+        "state": {
+            "status": "Success"
+        },
+        "data": {
+            "taskId": 1
+        }
+    }
+    ```
+
+### Delete Task
+- **URL**: `/task`
+- **Method**: `DELETE`
+- **Response**:
+  - **Status**: `200 OK`
+  - **Body**:
+    ```json
+    {
+        "state": {
+            "status": "Success"
+        }
+    }
+    ```

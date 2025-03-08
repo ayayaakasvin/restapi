@@ -6,72 +6,54 @@ import (
 	"net/http"
 
 	"restapi/internal/errorset"
-	"restapi/internal/lib/sl"
-	"restapi/internal/models"
-	"restapi/internal/models/status"
 	"restapi/internal/http-server/handlers/task/get"
+	helper "restapi/internal/lib/helperfunctions"
+	"restapi/internal/lib/sl"
+	"restapi/internal/models/data"
+	"restapi/internal/models/response"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Request struct {
-	TaskID int64 `json:"taskId" binding:"required,gt=0"`
-}
-
-type Response struct {
-	Status 	status.Status `json:"status"`
-	Task 	*models.Task `json:"task,omitempty"`
-}
-
-func GetTaskHandler (log *slog.Logger, tg get.TasksGetter) gin.HandlerFunc {
+func GetTaskHandler(log *slog.Logger, tg get.TasksGetter) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// load logger with necessary data
 		const op = "handlers.task.get.GetTaskHandler"
-		requestID, exists := c.Get("RequestID")
-        if !exists {
-            requestID = "unknown"
-        }
+		helper.LoadLogger(&log, c, op)
 
-        log = log.With(
-            slog.String("op", op),
-            slog.String("request_id", requestID.(string)),
-        )
-
-		var req Request
-		// Reads the body of the request and binds it to the Request struct
-		if err := c.ShouldBindJSON(&req); err != nil {
-			log.Error("failed to bind request", sl.Err(err))
-			responseError(c, http.StatusBadRequest, "failed to bind request")
+		// fetch ID param
+		taskID := helper.GetIDFromParams(c, helper.TaskIDKey)
+		if taskID == -1 {
+			response.Error(c, http.StatusBadRequest, errorset.ErrBindRequest)
 			return
 		}
 
-		log.Info("decoded request", slog.Any("req", req))
+		log.Info("decoded request", slog.Any("req", taskID))
 
-		task, err := tg.GetTaskByTaskID(req.TaskID)
+		// action with db
+		task, err := tg.GetTaskByTaskID(taskID)
 		if err != nil {
-			if errors.Is(err, errorset.ErrTaskNotFound) {
-				log.Error(err.Error(), sl.Err(err))
-				responseError(c, http.StatusNotFound, err.Error())
-				return
-			}
-			
-			log.Error("failed to get task", sl.Err(err))
-			responseError(c, http.StatusInternalServerError, "failed to get task")
+			handleGettingTaskError(c, log, err)
 			return
 		}
 
-		responseOk(c, task)
+		var data data.Data = data.NewData()
+		data[helper.TaskKey] = task
+
+		log.Info("task succesfully passed", 
+		slog.Int64(helper.UserIDKey, task.UserID), 
+		slog.Int64(helper.TaskIDKey, task.TaskID))
+		response.Ok(c, http.StatusFound, data)
 	}
 }
 
-func responseOk(c *gin.Context, task *models.Task) {
-	c.JSON(http.StatusOK, Response{
-		Status: status.OK(),
-		Task: task,
-	})
-}
+func handleGettingTaskError(c *gin.Context, log *slog.Logger, err error) {
+	log.Error("failed to get task", sl.Err(err))
+	if errors.Is(err, errorset.ErrTaskNotFound) {
+		response.Error(c, http.StatusNotFound, err.Error())
+		return
+	}
 
-func responseError(c *gin.Context, code int, errormsg string) {
-	c.JSON(code, Response{
-		Status: status.Error(errormsg),
-	})
+	response.Error(c, http.StatusInternalServerError, "failed to get task")
+	return
 }
