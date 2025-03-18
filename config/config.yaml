@@ -1,15 +1,20 @@
-env: "local"
+env: "prod"
 
 database:
   host: "localhost"
-  port: 5432
+  port: 5433
   databaseName: "todo"
   user: "todo_manager"
   password: "1488"
 
 http_server:
-  address: "localhost:8069"
+  address: "0.0.0.0:8045"
   timeout: 5s
   iddle_timeout: 60s
 
-migrationPath: "./migration" # Path to migration files in Unix systems
+cors:
+  addresses:
+    - "http://localhost:4200"
+    - "http://localhost:3000"
+    - "http://localhost:8088"
+    - "http://localhost:8069"
