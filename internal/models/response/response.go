@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/ayayaakasvin/restapigolang/internal/models/state"
+	"restapi/internal/models/state"
 
 	"github.com/gin-gonic/gin"
 )

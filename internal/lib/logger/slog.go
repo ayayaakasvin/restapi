@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 
-	slogpretty "github.com/ayayaakasvin/restapigolang/internal/lib/logger/handlers/prettyslog"
+	"restapi/internal/lib/logger/handlers/prettyslog"
 )
 
 const (

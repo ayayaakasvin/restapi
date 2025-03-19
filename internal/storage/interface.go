@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"github.com/ayayaakasvin/restapigolang/internal/models/task"
-	"github.com/ayayaakasvin/restapigolang/internal/models/user"
+	"restapi/internal/models/user"
+	"restapi/internal/models/task"
 )
 
 type Storage interface {

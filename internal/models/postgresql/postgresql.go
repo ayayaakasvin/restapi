@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ayayaakasvin/restapigolang/internal/config"
-	"github.com/ayayaakasvin/restapigolang/internal/errorset"
-	"github.com/ayayaakasvin/restapigolang/internal/lib/hashtool"
-	"github.com/ayayaakasvin/restapigolang/internal/models/task"
-	"github.com/ayayaakasvin/restapigolang/internal/models/user"
-	"github.com/ayayaakasvin/restapigolang/internal/storage"
+	"restapi/internal/config"
+	"restapi/internal/errorset"
+	"restapi/internal/lib/hashtool"
+	"restapi/internal/models/task"
+	"restapi/internal/models/user"
+	"restapi/internal/storage"
 
 	"github.com/lib/pq"
 )
@@ -23,7 +23,7 @@ type PostgreSQL struct {
 }
 
 // NewPostgreSQL creates a new PostgreSQL
-func NewPostgreSQL(cfg *config.Config) storage.Storage {
+func NewPostgreSQL(cfg *config.Config) (storage.Storage) {
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		cfg.Database.Host,

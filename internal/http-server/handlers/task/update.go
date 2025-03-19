@@ -4,11 +4,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/ayayaakasvin/restapigolang/internal/errorset"
-	helper "github.com/ayayaakasvin/restapigolang/internal/lib/helperfunctions"
-	"github.com/ayayaakasvin/restapigolang/internal/lib/sl"
-	"github.com/ayayaakasvin/restapigolang/internal/models/data"
-	"github.com/ayayaakasvin/restapigolang/internal/models/response"
+	"restapi/internal/errorset"
+	helper "restapi/internal/lib/helperfunctions"
+	"restapi/internal/lib/sl"
+	"restapi/internal/models/data"
+	"restapi/internal/models/response"
 
 	"github.com/gin-gonic/gin"
 )

@@ -51,8 +51,6 @@ func New(log *slog.Logger) gin.HandlerFunc {
 			slog.String("user_agent", c.Request.UserAgent()),
 		)
 
-		logger.Info("logger middleware enabled")
-
 		t1 := time.Now()
 		c.Next()
 

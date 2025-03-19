@@ -2,8 +2,7 @@ package user
 
 import (
 	"log/slog"
-
-	"github.com/ayayaakasvin/restapigolang/internal/storage"
+	"restapi/internal/storage"
 
 	"github.com/gin-gonic/gin"
 )
