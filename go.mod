@@ -1,4 +1,4 @@
-module restapi
+module github.com/ayayaakasvin/restapigolang
 
 go 1.23.4
 
