@@ -15,4 +15,6 @@ var (
 	ErrValidation									= errors.New("error while validation")
 	ErrForeignKeyConstraintViolation pq.ErrorCode 	= "23503"
 	ErrBindRequest    								= "failed to bind request"
+	ErrAuthorizationMissing							= "authorization header missing"
+	ErrInvalidAuthorization							= "invalid authorization header format"
 )

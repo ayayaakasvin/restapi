@@ -2,8 +2,7 @@ package task
 
 import (
 	"log/slog"
-
-	"github.com/ayayaakasvin/restapigolang/internal/storage"
+	"restapi/internal/storage"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +23,7 @@ type TaskHandler struct {
 func NewTaskHandler(log *slog.Logger, db storage.Storage) TaskHandlers {
 	return TaskHandler{
 		log: log,
-		db:  db,
+		db: db,
 	}
 }
 

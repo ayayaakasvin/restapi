@@ -4,51 +4,60 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/ayayaakasvin/restapigolang/internal/config"
-	"github.com/ayayaakasvin/restapigolang/internal/http-server/handlers"
-	"github.com/ayayaakasvin/restapigolang/internal/http-server/middleware"
-	"github.com/ayayaakasvin/restapigolang/internal/http-server/middleware/logger"
-	"github.com/ayayaakasvin/restapigolang/internal/storage"
+	"restapi/internal/config"
+	"restapi/internal/http-server/handlers"
+	"restapi/internal/http-server/middleware"
+	"restapi/internal/http-server/middleware/logger"
+	"restapi/internal/storage"
 	"github.com/gin-gonic/gin"
 )
 
-func App(storage storage.Storage, log *slog.Logger, cfg *config.Config) error {
+func App (storage storage.Storage, log *slog.Logger, cfg *config.Config) error {
 	server := setupServer(*cfg, log, storage)
 	log.Info("Serving on address", slog.String("address", cfg.Address))
 	return server.ListenAndServe()
 }
 
-func setupRouter(db storage.Storage, log *slog.Logger, cfg config.ServiceAddresses) *gin.Engine {
+func setupRouter (db storage.Storage, log *slog.Logger, cfg config.ServiceAddresses) *gin.Engine {
 	router := gin.Default()
 
-	middleware.LoadRouterWithMiddleware(router,
-		middleware.CorsWithConfig(cfg),
+	middleware.LoadRouterWithMiddleware(router, 
+		middleware.CorsWithConfig(cfg), 
 		logger.URLFormat(),
 		logger.New(log),
 		middleware.RequestIDMiddleware(),
 	)
-
+	
 	appHandlers := handlers.NewHandlers(db, log)
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "Hello World!")
 	})
 
-	userRouter := router.Group("/user")
+	privateRoute := router.Group("/user")
+	privateRoute.Use(middleware.AllowInternalRequests(log))
 	{
-		userRouter.POST("/", appHandlers.User.SaveUser)
-		userRouter.GET("/:userId", appHandlers.User.GetUser)
-		userRouter.PUT("/:userId/password", appHandlers.User.UpdateUserPassword)
-		userRouter.DELETE("/:userId", appHandlers.User.DeleteUser)
+		privateRoute.POST("/", appHandlers.User.SaveUser)
 	}
 
-	taskRouter := router.Group("/task")
+	publicProtectedRoute := router.Group("")
+	publicProtectedRoute.Use(middleware.JWNAuthMiddleware())
 	{
-		taskRouter.POST("/:userId", appHandlers.Task.SaveTask)
-		taskRouter.GET("/user/:userId", appHandlers.Task.GetTasksByUserID)
-		taskRouter.GET("/:taskId", appHandlers.Task.GetTaskByTaskID)
-		taskRouter.PUT("/:taskId", appHandlers.Task.UpdateTask)
-		taskRouter.DELETE("/:taskId", appHandlers.Task.DeleteTask)
+		userRouter := publicProtectedRoute.Group("/user")
+		{
+			userRouter.GET("/:userId", appHandlers.User.GetUser)
+			userRouter.PUT("/:userId/password", appHandlers.User.UpdateUserPassword)
+			userRouter.DELETE("/:userId", appHandlers.User.DeleteUser)
+		}
+
+		taskRouter := publicProtectedRoute.Group("/task")
+		{
+			taskRouter.POST("/:userId", appHandlers.Task.SaveTask)
+			taskRouter.GET("/user/:userId", appHandlers.Task.GetTasksByUserID)
+			taskRouter.GET("/:taskId", appHandlers.Task.GetTaskByTaskID)
+			taskRouter.PUT("/:taskId", appHandlers.Task.UpdateTask)
+			taskRouter.DELETE("/:taskId", appHandlers.Task.DeleteTask)
+		}
 	}
 
 	return router

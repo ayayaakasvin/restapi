@@ -2,10 +2,9 @@ package handlers
 
 import (
 	"log/slog"
-
-	"github.com/ayayaakasvin/restapigolang/internal/http-server/handlers/task"
-	"github.com/ayayaakasvin/restapigolang/internal/http-server/handlers/user"
-	"github.com/ayayaakasvin/restapigolang/internal/storage"
+	"restapi/internal/http-server/handlers/task"
+	"restapi/internal/http-server/handlers/user"
+	"restapi/internal/storage"
 )
 
 type Handlers struct {

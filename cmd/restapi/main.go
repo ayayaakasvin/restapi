@@ -3,13 +3,14 @@ package main
 import (
 	"log/slog"
 	"os"
-
-	"github.com/ayayaakasvin/restapigolang/internal/app"
-	"github.com/ayayaakasvin/restapigolang/internal/config"
-	"github.com/ayayaakasvin/restapigolang/internal/lib/logger"
-	"github.com/ayayaakasvin/restapigolang/internal/lib/sl"
-	"github.com/ayayaakasvin/restapigolang/internal/models/postgresql"
+	
+	"restapi/internal/app"
+	"restapi/internal/config"
+	"restapi/internal/lib/logger"
+	"restapi/internal/lib/sl"
+	"restapi/internal/models/postgresql"
 )
+
 
 func main() {
 	cfg := config.MustLoadConfig()
