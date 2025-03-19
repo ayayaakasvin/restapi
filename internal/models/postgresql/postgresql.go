@@ -23,7 +23,7 @@ type PostgreSQL struct {
 }
 
 // NewPostgreSQL creates a new PostgreSQL
-func NewPostgreSQL(cfg *config.Config) (storage.Storage) {
+func NewPostgreSQL(cfg *config.Config) storage.Storage {
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		cfg.Database.Host,
@@ -79,7 +79,7 @@ func (ps *PostgreSQL) GetUserByID(id int64) (*user.User, error) {
 	defer stmt.Close()
 
 	var user user.User
-	err = stmt.QueryRow(id).Scan(&user.ID, &user.UserName, &user.Password, &user.CreatedAt)
+	err = stmt.QueryRow(id).Scan(&user.UserID, &user.UserName, &user.Password, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errorset.ErrUserNotFound
