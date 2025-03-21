@@ -1,14 +1,14 @@
 env: "prod"
 
 database:
-  host: "db"
-  port: 5432
+  host: "localhost"
+  port: 5433
   databaseName: "todo"
   user: "todo_manager"
   password: "1488"
 
 http_server:
-  address: "0.0.0.0:8069"
+  address: "localhost:8059"
   timeout: 5s
   iddle_timeout: 60s
 
