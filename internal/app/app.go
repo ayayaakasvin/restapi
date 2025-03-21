@@ -45,15 +45,15 @@ func setupRouter (db storage.Storage, log *slog.Logger, cfg config.ServiceAddres
 	{
 		userRouter := publicProtectedRoute.Group("/user")
 		{
-			userRouter.GET("/:userId", appHandlers.User.GetUser)
-			userRouter.PUT("/:userId/password", appHandlers.User.UpdateUserPassword)
-			userRouter.DELETE("/:userId", appHandlers.User.DeleteUser)
+			userRouter.GET("", appHandlers.User.GetUser)
+			userRouter.PUT("/password", appHandlers.User.UpdateUserPassword)
+			userRouter.DELETE("", appHandlers.User.DeleteUser)
 		}
 
 		taskRouter := publicProtectedRoute.Group("/task")
 		{
-			taskRouter.POST("/:userId", appHandlers.Task.SaveTask)
-			taskRouter.GET("/user/:userId", appHandlers.Task.GetTasksByUserID)
+			taskRouter.POST("", appHandlers.Task.SaveTask)
+			taskRouter.GET("/user", appHandlers.Task.GetTasksByUserID)
 			taskRouter.GET("/:taskId", appHandlers.Task.GetTaskByTaskID)
 			taskRouter.PUT("/:taskId", appHandlers.Task.UpdateTask)
 			taskRouter.DELETE("/:taskId", appHandlers.Task.DeleteTask)
