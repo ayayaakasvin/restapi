@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var JWTSecret []byte
+var _JWTSecret []byte
 
 func init() {
 	key := os.Getenv("JWT_SECRET_KEY")
@@ -16,7 +16,7 @@ func init() {
 		log.Fatalf("NO JWT SECRET KEY PROVIDED")
 	}
 
-	JWTSecret = []byte(key)
+	_JWTSecret = []byte(key)
 }
 
 func ValidateJWT(tokenString string) (jwt.MapClaims, error) {
@@ -25,7 +25,7 @@ func ValidateJWT(tokenString string) (jwt.MapClaims, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return JWTSecret, nil
+		return _JWTSecret, nil
 	})
 
 	if err != nil {

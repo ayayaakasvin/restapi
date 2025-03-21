@@ -22,7 +22,7 @@ func (t TaskHandler) GetTasksByUserID(c *gin.Context) {
 	logger := helper.LoadLogger(t.log, c, op)
 
 	// fetch ID param
-	userId := helper.GetIDFromParams(c, helper.UserIDKey)
+	userId := helper.FetchIDFromToken(c, helper.UserIDKey)
 	if userId == -1 {
 		response.Error(c, http.StatusBadRequest, errorset.ErrBindRequest)
 		return
