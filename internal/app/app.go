@@ -50,10 +50,10 @@ func setupRouter (db storage.Storage, log *slog.Logger, cfg config.ServiceAddres
 			userRouter.DELETE("", appHandlers.User.DeleteUser)
 		}
 
-		taskRouter := publicProtectedRoute.Group("/task")
+		taskRouter := publicProtectedRoute.Group("/tasks")
 		{
 			taskRouter.POST("", appHandlers.Task.SaveTask)
-			taskRouter.GET("/user", appHandlers.Task.GetTasksByUserID)
+			taskRouter.GET("", appHandlers.Task.GetTasksByUserID)
 			taskRouter.GET("/:taskId", appHandlers.Task.GetTaskByTaskID)
 			taskRouter.PUT("/:taskId", appHandlers.Task.UpdateTask)
 			taskRouter.DELETE("/:taskId", appHandlers.Task.DeleteTask)
