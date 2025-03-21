@@ -21,7 +21,7 @@ func (u UserHandler) GetUser(c *gin.Context) {
 	logger := helper.LoadLogger(u.log, c, op)
 
 	// fetch ID param
-	userId := helper.GetIDFromParams(c, helper.UserIDKey)
+	userId := helper.FetchIDFromToken(c, helper.UserIDKey)
 	if userId == -1 {
 		response.Error(c, http.StatusBadRequest, errorset.ErrBindRequest)
 		return

@@ -20,7 +20,7 @@ func (t TaskHandler) SaveTask(c *gin.Context) {
 	logger := helper.LoadLogger(t.log, c, op)
 
 	// fetch ID param
-	userID := helper.GetIDFromParams(c, helper.UserIDKey)
+	userID := helper.FetchIDFromToken(c, helper.UserIDKey)
 	if userID == -1 {
 		response.Error(c, http.StatusBadRequest, errorset.ErrBindRequest)
 		return
