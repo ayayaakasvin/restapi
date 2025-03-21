@@ -20,7 +20,7 @@ func (t TaskHandler) UpdateTask(c *gin.Context) {
 	logger := helper.LoadLogger(t.log, c, op)
 
 	// fetch ID param
-	taskID := helper.GetIDFromParams(c, helper.TaskIDKey)
+	taskID := helper.FetchIDFromToken(c, helper.TaskIDKey)
 	if taskID == -1 {
 		response.Error(c, http.StatusBadRequest, errorset.ErrBindRequest)
 		return

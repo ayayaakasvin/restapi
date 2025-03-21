@@ -64,12 +64,13 @@ func FetchIDFromToken(c *gin.Context, idkey string) (int64) {
 		return -1
 	}
 
-	id, ok := claims[idkey].(int64)
-	if !ok || id == 0 {
+	idFloat, ok := claims[idkey].(float64)
+	if !ok || idFloat == 0 {
+		slog.Error("ID not found or invalid in JWT claims", "key", idkey)
 		return -1
 	}
 
-	return id
+	return int64(idFloat)
 }
 
 func FetchTokenFromContext(c *gin.Context) (string, error) {
