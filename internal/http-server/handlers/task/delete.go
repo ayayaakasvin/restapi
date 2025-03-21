@@ -19,7 +19,7 @@ func (t TaskHandler) DeleteTask(c *gin.Context) {
 	logger := helper.LoadLogger(t.log, c, op)
 
 	// fetch ID param
-	taskId := helper.GetIDFromParams(c, helper.TaskIDKey)
+	taskId := helper.FetchIDFromToken(c, helper.TaskIDKey)
 	if taskId == -1 {
 		response.Error(c, http.StatusBadRequest, errorset.ErrBindRequest)
 		return

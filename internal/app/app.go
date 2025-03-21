@@ -37,7 +37,7 @@ func setupRouter (db storage.Storage, log *slog.Logger, cfg config.ServiceAddres
 	privateRoute := router.Group("/user")
 	privateRoute.Use(middleware.AllowInternalRequests(log))
 	{
-		privateRoute.POST("/", appHandlers.User.SaveUser)
+		privateRoute.POST("", appHandlers.User.SaveUser)
 	}
 
 	publicProtectedRoute := router.Group("")
@@ -45,18 +45,18 @@ func setupRouter (db storage.Storage, log *slog.Logger, cfg config.ServiceAddres
 	{
 		userRouter := publicProtectedRoute.Group("/user")
 		{
-			userRouter.GET("/", appHandlers.User.GetUser)
-			userRouter.PUT("/password/", appHandlers.User.UpdateUserPassword)
-			userRouter.DELETE("/", appHandlers.User.DeleteUser)
+			userRouter.GET("", appHandlers.User.GetUser)
+			userRouter.PUT("/password", appHandlers.User.UpdateUserPassword)
+			userRouter.DELETE("", appHandlers.User.DeleteUser)
 		}
 
 		taskRouter := publicProtectedRoute.Group("/tasks")
 		{
-			taskRouter.POST("/", appHandlers.Task.SaveTask)
-			taskRouter.GET("/", appHandlers.Task.GetTasksByUserID)
-			taskRouter.GET("/:taskId/", appHandlers.Task.GetTaskByTaskID)
-			taskRouter.PUT("/:taskId/", appHandlers.Task.UpdateTask)
-			taskRouter.DELETE("/:taskId/", appHandlers.Task.DeleteTask)
+			taskRouter.POST("", appHandlers.Task.SaveTask)
+			taskRouter.GET("", appHandlers.Task.GetTasksByUserID)
+			taskRouter.GET("/:taskId", appHandlers.Task.GetTaskByTaskID)
+			taskRouter.PUT("/:taskId", appHandlers.Task.UpdateTask)
+			taskRouter.DELETE("/:taskId", appHandlers.Task.DeleteTask)
 		}
 	}
 
