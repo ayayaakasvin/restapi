@@ -31,8 +31,12 @@ func GetIDFromParams(c *gin.Context, idkey string) int64 {
 	if taskIDString == "" {
 		return -1
 	}
-	taskID, err := strconv.ParseInt(taskIDString, 10, 0)
+	taskID, err := strconv.ParseInt(taskIDString, 10, 64)
 	if err != nil {
+		slog.Error("GetIDFromParams failed: invalid int conversion",
+		slog.String("param", taskIDString),
+		slog.String("idkey", idkey),
+		slog.String("error", err.Error()))
 		return -1
 	}
 
