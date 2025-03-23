@@ -7,7 +7,6 @@ import (
 	"restapi/internal/errorset"
 	helper "restapi/internal/lib/helperfunctions"
 	"restapi/internal/lib/sl"
-	"restapi/internal/models/data"
 	"restapi/internal/models/response"
 
 	"github.com/gin-gonic/gin"
@@ -44,9 +43,6 @@ func (t TaskHandler) UpdateTask(c *gin.Context) {
 		return
 	}
 
-	var data data.Data = data.NewData()
-	data[helper.TaskIDKey] = taskID
-
 	logger.Info("task updated successfully", slog.Int64(helper.TaskIDKey, taskID))
-	response.Ok(c, http.StatusOK, data)
+	response.Ok(c, http.StatusOK, nil)
 }

@@ -29,7 +29,7 @@ func (u UserHandler) SaveUser(c *gin.Context) {
 		return
 	}
 
-	logger.Info("decoded request", slog.Any(helper.ReqKey, req))
+	logger.Info("decoded request", slog.Any(helper.ReqKey, req.Username))
 
 	// validate request
 	if err := validatingRequest(c, logger, req, u.db); err != nil {

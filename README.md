@@ -28,7 +28,7 @@
     ```
 
 ### Get User by User ID
-- **URL**: `/user/:userId`
+- **URL**: `/user`
 - **Method**: `GET`
 - **Response**:
   - **Status**: `200 OK`
@@ -49,7 +49,7 @@
     ```
 
 ### Update User Password
-- **URL**: `/user/:userId/password`
+- **URL**: `/user/password`
 - **Method**: `PUT`
 - **Request Body**:
   ```json
@@ -64,9 +64,6 @@
     {
         "state": {
             "status": "Success"
-        },
-        "data": {
-            "userId": 3
         }
     }
     ```
@@ -113,7 +110,7 @@
 ## Task Endpoints
 
 ### Create Task
-- **URL**: `/task/:userId`
+- **URL**: `/tasks`
 - **Method**: `POST`
 - **Request Body**:
   ```json
@@ -130,14 +127,13 @@
             "status": "Success"
         },
         "data": {
-            "taskId": 1,
-            "userId": 1
+            "taskId": 1
         }
     }
     ```
 
 ### Get Tasks by User ID
-- **URL**: `/task/user/:userId`
+- **URL**: `/tasks`
 - **Method**: `GET`
 - **Response**:
   - **Status**: `200 OK`
@@ -161,7 +157,7 @@
     ```
 
 ### Get Task by Task ID
-- **URL**: `/task/:taskId`
+- **URL**: `/tasks/:taskId`
 - **Method**: `GET`
 - **Response**:
   - **Status**: `200 OK`
@@ -183,7 +179,7 @@
     ```
 
 ### Update Task
-- **URL**: `/task`
+- **URL**: `/tasks`
 - **Method**: `PUT`
 - **Request Body**:
   ```json
@@ -198,15 +194,12 @@
     {
         "state": {
             "status": "Success"
-        },
-        "data": {
-            "taskId": 1
         }
     }
     ```
 
 ### Delete Task
-- **URL**: `/task`
+- **URL**: `/tasks`
 - **Method**: `DELETE`
 - **Response**:
   - **Status**: `200 OK`
