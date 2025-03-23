@@ -8,7 +8,6 @@ import (
 	helper "restapi/internal/lib/helperfunctions"
 	"restapi/internal/lib/password"
 	"restapi/internal/lib/sl"
-	"restapi/internal/models/data"
 	"restapi/internal/models/response"
 
 	"github.com/gin-gonic/gin"
@@ -51,10 +50,7 @@ func (u UserHandler) UpdateUserPassword(c *gin.Context) {
 		return
 	}
 
-	var data data.Data = data.NewData()
-	data[helper.UserIDKey] = userId
-
-	response.Ok(c, http.StatusOK, data)
+	response.Ok(c, http.StatusOK, nil)
 }
 
 func handleUpdatingUserError(c *gin.Context, log *slog.Logger, err error) {

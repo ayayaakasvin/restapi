@@ -34,7 +34,7 @@ func (t TaskHandler) SaveTask(c *gin.Context) {
 		return
 	}
 
-	logger.Info("decoded request", slog.Any(helper.ReqKey, req))
+	logger.Info("decoded request", slog.Any(helper.ReqKey, nil))
 
 	// action with db
 	taskId, err := t.db.SaveTask(userID, req.TaskContent)
@@ -44,7 +44,6 @@ func (t TaskHandler) SaveTask(c *gin.Context) {
 	}
 
 	var data data.Data = data.NewData()
-	data[helper.UserIDKey] = userID
 	data[helper.TaskIDKey] = taskId
 
 	logger.Info("task saved successfully", slog.Int64(helper.UserIDKey, userID))

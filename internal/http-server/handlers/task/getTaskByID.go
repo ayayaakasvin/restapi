@@ -43,7 +43,7 @@ func (t TaskHandler) GetTaskByTaskID(c *gin.Context) {
 		slog.Int64(helper.UserIDKey, task.UserID),
 		slog.Int64(helper.TaskIDKey, task.TaskID))
 
-	response.Ok(c, http.StatusFound, data)
+	response.Ok(c, http.StatusOK, data)
 }
 
 func handleGettingTaskError(c *gin.Context, log *slog.Logger, err error) {
